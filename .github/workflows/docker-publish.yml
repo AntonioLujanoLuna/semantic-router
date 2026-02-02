@@ -46,7 +46,8 @@ concurrency:
 jobs:
   # Build architecture-specific Docker images using native runners for optimal performance
   build_multiarch:
-    if: github.repository == 'vllm-project/semantic-router' && !github.event.pull_request.draft
+    # Allow running on fork for testing (remove AntonioLujanoLuna before upstream merge)
+    if: (github.repository == 'vllm-project/semantic-router' || github.repository == 'AntonioLujanoLuna/semantic-router') && !github.event.pull_request.draft
     # Use native ARM64 runners for arm64 builds - 10-20x faster than QEMU emulation
     runs-on: ${{ matrix.arch == 'arm64' && 'ubuntu-24.04-arm' || 'ubuntu-latest' }}
     # Explicit timeout to prevent indefinite hangs (target: <60 min per build)
@@ -269,7 +270,8 @@ jobs:
   # Create multi-architecture manifest lists combining arch-specific images
   # This job runs after all architecture-specific builds complete
   create_manifest:
-    if: github.repository == 'vllm-project/semantic-router' && github.event_name != 'pull_request'
+    # Allow running on fork for testing (remove AntonioLujanoLuna before upstream merge)
+    if: (github.repository == 'vllm-project/semantic-router' || github.repository == 'AntonioLujanoLuna/semantic-router') && github.event_name != 'pull_request'
     needs: build_multiarch
     runs-on: ubuntu-latest
     timeout-minutes: 15
